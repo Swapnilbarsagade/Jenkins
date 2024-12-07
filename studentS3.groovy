@@ -22,8 +22,8 @@ pipeline {
                 sudo mvn clean package  # Build the WAR file
                 sudo apt update 
                 sudo apt install unzip -y
-                sudo curl -O https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.96/bin/apache-tomcat-9.0.96.zip
-                sudo unzip -o apache-tomcat-9.0.96.zip 
+                sudo curl -O https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.97/bin/apache-tomcat-9.0.97.zip
+                sudo unzip -o apache-tomcat-9.0.97.zip 
                 '''
             }
         }
