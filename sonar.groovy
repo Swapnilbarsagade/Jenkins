@@ -1,6 +1,6 @@
 pipeline {
     agent{
-        label any
+        label 'dummy'
     } 
     stages{
         stage (pull){
@@ -12,6 +12,7 @@ pipeline {
         stage (build){
             steps{
                 sh '''
+                
                 sudo apt update
                 sudo apt install maven -y
                 sudo apt install unzip -y
@@ -26,9 +27,10 @@ pipeline {
 
          stage (test){
             steps{
-                sh '''
-                mvn sonar:sonar   -Dsonar.projectKey=studentapp   -Dsonar.host.url=http://13.125.4.135:9000   -Dsonar.login=ece555bcfcc2a48216418caac40b3abcc22b228d
-                '''
+                sh '''mvn sonar:sonar \\
+                      -Dsonar.projectKey=studentapp \\
+                      -Dsonar.host.url=http://13.125.4.135:9000 \\
+                      -Dsonar.login=ece555bcfcc2a48216418caac40b3abcc22b228d'''
                 echo "we are testing"
             }   
         }
