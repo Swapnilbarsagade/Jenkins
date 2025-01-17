@@ -1,58 +1,60 @@
 pipeline {
-    agent{
+    agent {
         label 'dummy'
-    } 
-    stages{
-        stage (pull){
-            steps{
-                echo "we are pulling from github"
-                git "https://github.com/AnupDudhe/studentapp-ui"
-            }   
+    }
+    stages {
+        stage('Pull') {
+            steps {
+                echo "Pulling from GitHub"
+                git url: 'https://github.com/AnupDudhe/studentapp-ui'
+            }
         }
-        stage (build){
-            steps{
+        stage('Build') {
+            steps {
                 sh '''
-                
+                # Update system and install dependencies
                 sudo apt update
-                sudo apt install maven -y
-                sudo apt install unzip -y
+                sudo apt install -y maven unzip
+
+                # Remove existing Tomcat if it exists
+                if [ -d "apache-tomcat-9.0.97" ]; then
+                    sudo rm -rf apache-tomcat-9.0.97
+                fi
+        
+                # Download and unzip Tomcat
                 sudo wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.97/bin/apache-tomcat-9.0.97.zip
                 sudo unzip apache-tomcat-9.0.97.zip
-                sudo mvn clean package
-                
+
+                # Build the project
+                mvn clean package
                 '''
-                echo "we are building"
-            }   
+                echo "Build completed"
+            }
         }
-
-         stage (test){
-            steps{
-                sh '''mvn sonar:sonar \\
-                      -Dsonar.projectKey=studentapp \\
-                      -Dsonar.host.url=http://13.125.4.135:9000 \\
-                      -Dsonar.login=ece555bcfcc2a48216418caac40b3abcc22b228d'''
-                echo "we are testing"
-            }   
+        stage('Test') {
+            steps {
+                withSonarQubeEnv('SonarQube') { // Replace 'SonarQube' with your SonarQube configuration name
+                    sh '''
+                    mvn sonar:sonar \
+                        -Dsonar.projectKey=studentapp \
+                        -Dsonar.host.url=http://43.202.110.30:9000 \
+                        -Dsonar.login=$SONAR_AUTH_TOKEN
+                    '''
+                }
+                echo "Testing completed"
+            }
         }
-
-        stage (deploy){
-            steps{
+        stage('Deploy') {
+            steps {
                 sh '''
-                sudo mv target/*.war  apache-tomcat-9.0.97/webapps/student.war
-                sudo bash apache-tomcat-9.0.97/bin/catalina.sh start
+                # Deploy the application to Tomcat
+                mv target/*.war apache-tomcat-9.0.97/webapps/student.war
+
+                # Start Tomcat server
+                bash apache-tomcat-9.0.97/bin/catalina.sh start
                 '''
-                echo "we are configuring"
-            }   
+                echo "Deployment completed"
+            }
         }
     }
-
-
-
-
-
-
-
-
-
-
 }

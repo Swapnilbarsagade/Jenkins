@@ -41,6 +41,13 @@ Here's a detailed guide for installing and configuring SonarQube on your system.
 ---
 
 ### **Step 2: Install Java**
+
+1. Install the Missing Dependencies
+
+   ```bash
+   yum install -y libX11 libXext libXi libXrender libXtst alsa-lib freetype
+   ```
+
 2. Install BellSoft JDK 11:
    ```bash
    wget https://download.bell-sw.com/java/11.0.4/bellsoft-jdk11.0.4-linux-amd64.rpm
